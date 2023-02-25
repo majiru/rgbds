@@ -73,7 +73,7 @@ static char *make_escape(char const *str)
 	char *dest = escaped_str;
 
 	if (escaped_str == NULL)
-		err("%s: Failed to allocate memory", __func__);
+		err("%r: Failed to allocate memory");
 
 	while (*str) {
 		// All dollars needs to be doubled

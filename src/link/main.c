@@ -527,4 +527,5 @@ int main(int argc, char *argv[])
 
 	// Do cleanup before quitting, though.
 	cleanup();
+	return 0;
 }

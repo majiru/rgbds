@@ -503,7 +503,7 @@ static uint16_t writeMapBank(struct SortedSections const *sectList,
  * Write the total used and free space by section type to the map file
  * @param usedMap The total used space by section type
  */
-static void writeMapSummary(uint32_t usedMap[MIN_NB_ELMS(SECTTYPE_INVALID)])
+static void writeMapSummary(uint32_t *usedMap)
 {
 	if (!mapFile)
 		return;

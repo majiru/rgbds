@@ -428,8 +428,6 @@ max_out:
 		if (!nbSectionsToAssign)
 			return;
 	}
-
-	unreachable_();
 }
 
 void assign_Cleanup(void)

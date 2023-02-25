@@ -541,7 +541,7 @@ enum {
 %left	T_OP_SHL T_OP_SHR T_OP_USHR
 %left	T_OP_MUL T_OP_DIV T_OP_MOD
 
-%precedence	NEG // negation -- unary minus
+//%prec	NEG // negation -- unary minus
 
 %token	T_OP_EXP "**"
 %left	T_OP_EXP

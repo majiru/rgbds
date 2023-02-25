@@ -379,8 +379,7 @@ void warning(enum WarningID id, char const *fmt, ...)
 		return;
 
 	case WARNING_DEFAULT:
-		unreachable_();
-		// Not reached
+		break;
 
 	case WARNING_ENABLED:
 		break;

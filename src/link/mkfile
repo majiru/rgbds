@@ -1,0 +1,29 @@
+</$objtype/mkfile
+
+BIN=$home/bin/$objtype
+TARG=rgblink
+
+# ThIs MaKeS It PoRtAbLe
+POSIX=-D PRIu32="%ud" -DPRId32="%d" -DPRIx32="%x" -DPRIX32="%X" -DPRIo32="%o" -DSTDOUT_FILENO=1 -DSTDIN_FILENO=0 -DPRIu8="%ud" -DPRIu16="%ud" -DPRId16="%d" -DPRIx16="%x" -DPRIX16="%X" -DMB_LEN_MAX=4 -DUINT32_C='(uint32_t)'
+
+CFLAGS=-Fpw -I ../../include -I/sys/include/npe -D__plan9__ -D__${objtype}__ $POSIX
+
+OFILES=\
+	assign.$O \
+	main.$O \
+	object.$O \
+	output.$O \
+	patch.$O \
+	script.$O \
+	sdas_obj.$O \
+	section.$O \
+	symbol.$O \
+	getopt.$O \
+	utf8decoder.$O \
+	error.$O \
+	hashmap.$O \
+	linkdefs.$O \
+	opmath.$O \
+	version.$O \
+
+</sys/src/cmd/mkone

@@ -15,7 +15,6 @@
 
 #define HASH_NB_BITS 32
 #define HALF_HASH_NB_BITS 16
-static_assert(HALF_HASH_NB_BITS * 2 == HASH_NB_BITS, "");
 #define HASHMAP_NB_BUCKETS (1 << HALF_HASH_NB_BITS)
 
 // HashMapEntry is internal, please do not attempt to use it

@@ -50,7 +50,9 @@ struct MacroArgs *macro_GetCurrentArgs(void)
 
 struct MacroArgs *macro_NewArgs(void)
 {
-	struct MacroArgs *args = malloc(SIZEOF_ARGS(INITIAL_ARG_SIZE));
+	struct MacroArgs *args;
+
+	args = malloc(sizeof(*args) + sizeof(args->args[0]) * INITIAL_ARG_SIZE);
 
 	if (!args)
 		fatalerror("Unable to register macro arguments: %s\n", strerror(errno));
@@ -73,7 +75,7 @@ void macro_AppendArg(struct MacroArgs **argPtr, char *s)
 		// Check that overflow didn't roll us back
 		if (macArgs->capacity <= macArgs->nbArgs)
 			fatalerror("Failed to add new macro argument: capacity overflow\n");
-		macArgs = realloc(macArgs, SIZEOF_ARGS(macArgs->capacity));
+		macArgs = realloc(macArgs, sizeof(*macArgs) + sizeof(macArgs->args[0]) * macArgs->capacity);
 		if (!macArgs)
 			fatalerror("Error adding new macro argument: %s\n", strerror(errno));
 	}

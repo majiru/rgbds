@@ -831,7 +831,6 @@ void sect_BinaryFile(char const *s, int32_t startPos)
 		if (!reserveSpace(fsize - startPos))
 			goto cleanup;
 	} else {
-		if (errno != ESPIPE)
 			error("Error determining size of INCBIN file '%s': %s\n",
 			      s, strerror(errno));
 		// The file isn't seekable, so we'll just skip bytes
@@ -908,7 +907,6 @@ void sect_BinaryFileSlice(char const *s, int32_t start_pos, int32_t length)
 
 		fseek(f, start_pos, SEEK_SET);
 	} else {
-		if (errno != ESPIPE)
 			error("Error determining size of INCBIN file '%s': %s\n",
 				s, strerror(errno));
 		// The file isn't seekable, so we'll just skip bytes
@@ -978,7 +976,7 @@ void sect_PopSection(void)
 	free(entry);
 }
 
-bool sect_IsSizeKnown(struct Section const NONNULL(sect))
+bool sect_IsSizeKnown(struct Section const *sect)
 {
 	// SECTION UNION and SECTION FRAGMENT can still grow
 	if (sect->modifier != SECTION_NORMAL)

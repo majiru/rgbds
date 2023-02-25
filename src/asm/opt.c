@@ -147,7 +147,7 @@ void opt_Parse(char *s)
 
 	case 'r': {
 		++s; // Skip 'r'
-		while (isblank(*s))
+		while (isspace(*s))
 			++s; // Skip leading whitespace
 
 		if (s[0] == '\0') {

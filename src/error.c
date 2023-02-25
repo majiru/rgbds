@@ -15,7 +15,7 @@
 #include "error.h"
 #include "platform.h"
 
-static void vwarn(char const NONNULL(fmt), va_list ap)
+static void vwarn(char const *fmt, va_list ap)
 {
 	fprintf(stderr, "warning: ");
 	vfprintf(stderr, fmt, ap);
@@ -23,7 +23,7 @@ static void vwarn(char const NONNULL(fmt), va_list ap)
 	perror(NULL);
 }
 
-static void vwarnx(char const NONNULL(fmt), va_list ap)
+static void vwarnx(char const *fmt, va_list ap)
 {
 	fprintf(stderr, "warning");
 	fputs(": ", stderr);
@@ -31,7 +31,7 @@ static void vwarnx(char const NONNULL(fmt), va_list ap)
 	putc('\n', stderr);
 }
 
-_Noreturn static void verr(char const NONNULL(fmt), va_list ap)
+_Noreturn static void verr(char const *fmt, va_list ap)
 {
 	fprintf(stderr, "error: ");
 	vfprintf(stderr, fmt, ap);
@@ -41,7 +41,7 @@ _Noreturn static void verr(char const NONNULL(fmt), va_list ap)
 	exit(1);
 }
 
-_Noreturn static void verrx(char const NONNULL(fmt), va_list ap)
+_Noreturn static void verrx(char const *fmt, va_list ap)
 {
 	fprintf(stderr, "error");
 	fputs(": ", stderr);
@@ -50,7 +50,7 @@ _Noreturn static void verrx(char const NONNULL(fmt), va_list ap)
 	exit(1);
 }
 
-void warn(char const NONNULL(fmt), ...)
+void warn(char const *fmt, ...)
 {
 	va_list ap;
 
@@ -59,7 +59,7 @@ void warn(char const NONNULL(fmt), ...)
 	va_end(ap);
 }
 
-void warnx(char const NONNULL(fmt), ...)
+void warnx(char const *fmt, ...)
 {
 	va_list ap;
 
@@ -68,7 +68,7 @@ void warnx(char const NONNULL(fmt), ...)
 	va_end(ap);
 }
 
-_Noreturn void err(char const NONNULL(fmt), ...)
+_Noreturn void err(char const *fmt, ...)
 {
 	va_list ap;
 
@@ -77,7 +77,7 @@ _Noreturn void err(char const NONNULL(fmt), ...)
 	va_end(ap);
 }
 
-_Noreturn void errx(char const NONNULL(fmt), ...)
+_Noreturn void errx(char const *fmt, ...)
 {
 	va_list ap;
 

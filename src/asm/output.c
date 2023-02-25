@@ -172,6 +172,7 @@ static uint32_t getsectid(struct Section const *sect)
 	}
 
 	fatalerror("Unknown section '%s'\n", sect->name);
+	return -1;
 }
 
 static uint32_t getSectIDIfAny(struct Section const *sect)

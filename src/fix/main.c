@@ -469,11 +469,13 @@ do { \
 			if (!features)
 				break;
 			mbc = ROM_RAM - 1;
+#ifndef __plan9__
 			static_assert(ROM_RAM + 1 == ROM_RAM_BATTERY, "Enum sanity check failed!");
 			static_assert(MBC1 + 1 == MBC1_RAM, "Enum sanity check failed!");
 			static_assert(MBC1 + 2 == MBC1_RAM_BATTERY, "Enum sanity check failed!");
 			static_assert(MMM01 + 1 == MMM01_RAM, "Enum sanity check failed!");
 			static_assert(MMM01 + 2 == MMM01_RAM_BATTERY, "Enum sanity check failed!");
+#endif
 			// fallthrough
 		case MBC1:
 		case MMM01:
@@ -501,10 +503,12 @@ do { \
 				mbc = MBC3_TIMER_BATTERY;
 				// RAM is handled below
 			}
+#ifndef __plan9__
 			static_assert(MBC3 + 1 == MBC3_RAM, "Enum sanity check failed!");
 			static_assert(MBC3 + 2 == MBC3_RAM_BATTERY, "Enum sanity check failed!");
 			static_assert(MBC3_TIMER_BATTERY + 1 == MBC3_TIMER_RAM_BATTERY,
 				      "Enum sanity check failed!");
+#endif
 			if (features == RAM)
 				mbc++;
 			else if (features == (RAM | BATTERY))
@@ -518,11 +522,13 @@ do { \
 				features &= ~RUMBLE;
 				mbc = MBC5_RUMBLE;
 			}
+#ifndef __plan9__
 			static_assert(MBC5 + 1 == MBC5_RAM, "Enum sanity check failed!");
 			static_assert(MBC5 + 2 == MBC5_RAM_BATTERY, "Enum sanity check failed!");
 			static_assert(MBC5_RUMBLE + 1 == MBC5_RUMBLE_RAM, "Enum sanity check failed!");
 			static_assert(MBC5_RUMBLE + 2 == MBC5_RUMBLE_RAM_BATTERY,
 				      "Enum sanity check failed!");
+#endif
 			if (features == RAM)
 				mbc++;
 			else if (features == (RAM | BATTERY))
@@ -672,10 +678,9 @@ static char const *mbcName(enum MbcType type)
 	case MBC_BAD:
 	case MBC_WRONG_FEATURES:
 	case MBC_BAD_RANGE:
-		unreachable_();
+		break;
 	}
-
-	unreachable_();
+	return NULL;
 }
 
 static bool hasRAM(enum MbcType type)
@@ -736,8 +741,7 @@ static bool hasRAM(enum MbcType type)
 	case TPP1_BATTERY_TIMER_MULTIRUMBLE_RUMBLE:
 		break;
 	}
-
-	unreachable_();
+	return false;
 }
 
 static const uint8_t ninLogo[] = {
@@ -796,7 +800,7 @@ static ssize_t readBytes(int fd, uint8_t *buf, size_t len)
 	while (len) {
 		ssize_t ret = read(fd, buf, len);
 
-		if (ret == -1 && errno != EINTR) // Return errors, unless we only were interrupted
+		if (ret == -1) // Return errors, unless we only were interrupted
 			return -1;
 		// EOF reached
 		if (ret == 0)
@@ -822,7 +826,7 @@ static ssize_t writeBytes(int fd, void *buf, size_t len)
 	while (len) {
 		ssize_t ret = write(fd, buf, len);
 
-		if (ret == -1 && errno != EINTR) // Return errors, unless we only were interrupted
+		if (ret == -1) // Return errors, unless we only were interrupted
 			return -1;
 		// EOF reached
 		if (ret == 0)
@@ -884,7 +888,7 @@ static void overwriteBytes(uint8_t *rom0, uint16_t startAddr, uint8_t const *fix
  * @param name The file's name, to be displayed for error output
  * @param fileSize The file's size if known, 0 if not.
  */
-static void processFile(int input, int output, char const *name, off_t fileSize)
+static void processFile(int input, int output, char const *name, ulong fileSize)
 {
 	// Both of these should be true for seekable files, and neither otherwise
 	if (input == output)
@@ -992,8 +996,10 @@ static void processFile(int input, int output, char const *name, off_t fileSize)
 			report("FATAL: \"%s\" has more than 65536 banks\n", name);
 			return;
 		}
+#ifndef __plan9__
 		// This should be guaranteed from the size cap...
 		static_assert(0x10000 * BANK_SIZE <= SSIZE_MAX, "Max input file size too large for OS");
+#endif
 		// Compute number of banks and ROMX len from file size
 		nbBanks = (fileSize + (BANK_SIZE - 1)) / BANK_SIZE;
 		//      = ceil(totalRomxLen / BANK_SIZE)
@@ -1013,7 +1019,9 @@ static void processFile(int input, int output, char const *name, off_t fileSize)
 			// Update bank count, ONLY IF at least one byte was read
 			if (bankLen) {
 				// We're gonna read another bank, check that it won't be too much
+#ifndef __plan9__
 				static_assert(0x10000 * BANK_SIZE <= SSIZE_MAX, "Max input file size too large for OS");
+#endif
 				if (nbBanks == 0x10000) {
 					report("FATAL: \"%s\" has more than 65536 banks\n", name);
 					goto cleanup;
@@ -1103,7 +1111,7 @@ static void processFile(int input, int output, char const *name, off_t fileSize)
 	// In case the output depends on the input, reset to the beginning of the file, and only
 	// write the header
 	if (input == output) {
-		if (lseek(output, 0, SEEK_SET) == (off_t)-1) {
+		if (seek(output, 0, SEEK_SET) == (size_t)-1) {
 			report("FATAL: Failed to rewind \"%s\": %s\n", name, strerror(errno));
 			goto cleanup;
 		}
@@ -1141,7 +1149,7 @@ static void processFile(int input, int output, char const *name, off_t fileSize)
 	// Output padding
 	if (padValue != UNSPECIFIED) {
 		if (input == output) {
-			if (lseek(output, 0, SEEK_END) == (off_t)-1) {
+			if (seek(output, 0, SEEK_END) == (size_t)-1) {
 				report("FATAL: Failed to seek to end of \"%s\": %s\n",
 				       name, strerror(errno));
 				goto cleanup;
@@ -1151,7 +1159,9 @@ static void processFile(int input, int output, char const *name, off_t fileSize)
 		size_t len = (nbBanks - 1) * BANK_SIZE - totalRomxLen; // Don't count ROM0!
 
 		while (len) {
+#ifndef __plan9__
 			static_assert(sizeof(bank) <= SSIZE_MAX, "Bank too large for reading");
+#endif
 			size_t thisLen = len > sizeof(bank) ? sizeof(bank) : len;
 			ssize_t ret = writeBytes(output, bank, thisLen);
 
@@ -1194,6 +1204,17 @@ static bool processFilename(char const *name)
 			goto finish;
 		}
 
+#ifdef __plan9__
+		Dir *d;
+		size_t size;
+		d = dirfstat(input);
+		if(d == nil)
+			report("FATA: failed to stat: %r\n");
+		size = d->length;
+		free(d);
+		processFile(input, input, name, size);
+#else
+
 		if (fstat(input, &stat) == -1) {
 			report("FATAL: Failed to stat \"%s\": %s\n", name, strerror(errno));
 		} else if (!S_ISREG(stat.st_mode)) { // FIXME: Do we want to support other types?
@@ -1207,6 +1228,7 @@ static bool processFilename(char const *name)
 		} else {
 			processFile(input, input, name, stat.st_size);
 		}
+#endif
 
 		close(input);
 	}

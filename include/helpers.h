@@ -25,6 +25,10 @@
 	#else
 		#define unreachable_	__builtin_trap
 	#endif
+#elif defined(__plan9__)
+	#define format_(archetype, str_index, first_arg)
+	#define attr_(...)
+	#define _Noreturn
 #else
 	// Unsupported, but no need to throw a fit
 	#define format_(archetype, str_index, first_arg)

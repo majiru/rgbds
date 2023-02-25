@@ -64,6 +64,29 @@
 } while (0)
 # define munmap(ptr, size)  UnmapViewOfFile((ptr))
 
+#elif defined(__plan9__)
+
+#define MAP_FAILED NULL
+
+// ay carãmba!
+# define mapFile(ptr, fd, path, size) do { \
+	(ptr) = MAP_FAILED; \
+	(ptr) = mallocz(size, 1); \
+	ulong __n, __pos, __size; \
+	__size = size; \
+	__n = __pos = 0; \
+	do{ \
+		__n = read(fd, (ptr) + __pos, __size); \
+		if(__n < 0) \
+			sysfatal("read: %r"); \
+		__pos += __n; \
+		__size -= __n; \
+	} while(__size != 0); \
+} while (0)
+
+#define munmap(ptr, size) free(ptr)
+
+
 #else // defined(_MSC_VER) || defined(__MINGW32__)
 
 # include <sys/mman.h>
@@ -290,9 +313,9 @@ static bool isWhitespace(int c)
 
 #define LEXER_BUF_SIZE 42 // TODO: determine a sane value for this
 // The buffer needs to be large enough for the maximum `peekInternal` lookahead distance
-static_assert(LEXER_BUF_SIZE > 1, "Lexer buffer size is too small");
+//static_assert(LEXER_BUF_SIZE > 1, "Lexer buffer size is too small");
 // This caps the size of buffer reads, and according to POSIX, passing more than SSIZE_MAX is UB
-static_assert(LEXER_BUF_SIZE <= SSIZE_MAX, "Lexer buffer size is too large");
+//static_assert(LEXER_BUF_SIZE <= SSIZE_MAX, "Lexer buffer size is too large");
 
 struct Expansion {
 	struct Expansion *parent;
@@ -471,7 +494,7 @@ struct LexerState *lexer_OpenFile(char const *path)
 		// Important: do NOT assign to `state->ptr` directly, to avoid a cast that may
 		// alter an eventual `MAP_FAILED` value. It would also invalidate `state->fd`,
 		// being on the other side of the union.
-		void *mappingAddr;
+		char *mappingAddr;
 
 		mapFile(mappingAddr, state->fd, state->path, fileInfo.st_size);
 		if (mappingAddr == MAP_FAILED) {

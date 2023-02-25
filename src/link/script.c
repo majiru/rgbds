@@ -178,8 +178,8 @@ static int nextChar(void)
 	int curchar = getc(linkerScript);
 
 	if (curchar == EOF && ferror(linkerScript))
-		err("%s(%" PRIu32 "): Unexpected error in %s",
-		    linkerScriptName, lineNo, __func__);
+		err("%r(%" PRIu32 "): Unexpected error in %s",
+		    linkerScriptName, lineNo);
 	return curchar;
 }
 
@@ -253,8 +253,7 @@ static struct LinkerScriptToken *nextToken(void)
 				capacity *= 2;
 				token.attr.string = realloc(token.attr.string, capacity);
 				if (!token.attr.string)
-					err("%s: Failed to allocate memory for string",
-					    __func__);
+					err("%r: Failed to allocate memory for string");
 			}
 			token.attr.string[size++] = curchar;
 		} while (curchar);
@@ -269,8 +268,7 @@ static struct LinkerScriptToken *nextToken(void)
 				capacity *= 2;
 				str = realloc(str, capacity);
 				if (!str)
-					err("%s: Failed to allocate memory for token",
-					    __func__);
+					err("%r: Failed to allocate memory for token");
 			}
 			str[size] = toupper(curchar);
 			size++;
@@ -333,7 +331,7 @@ static void processCommand(enum LinkerScriptCommand command, uint16_t arg, uint1
 {
 	switch (command) {
 	case COMMAND_INVALID:
-		unreachable_();
+		break;
 
 	case COMMAND_ORG:
 		break;
@@ -405,12 +403,12 @@ struct SectionPlacement *script_NextSection(void)
 
 		switch (parserState) {
 		case PARSER_FIRSTTIME:
-			unreachable_();
+			break;
 
 		case PARSER_LINESTART:
 			switch (token->type) {
 			case TOKEN_INVALID:
-				unreachable_();
+				break;
 
 			case TOKEN_EOF:
 				if (!popFile())
