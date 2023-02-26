@@ -280,7 +280,7 @@ static struct RawIndexedImage *indexed_png_to_raw(struct PNGImage *img)
 static struct RawIndexedImage *grayscale_png_to_raw(struct PNGImage *img)
 {
 	if (img->depth < 8)
-		png_set_expand_gray_1_2_4_to_8(img->png);
+		png_set_gray_1_2_4_to_8(img->png);
 
 	png_set_gray_to_rgb(img->png);
 	return truecolor_png_to_raw(img);
@@ -600,6 +600,7 @@ static uint8_t palette_index_of(png_color const *palette,
 		}
 	}
 	errx("The input PNG file contains colors that don't appear in its embedded palette.");
+	return 0;
 }
 
 static void read_png(struct PNGImage *img)

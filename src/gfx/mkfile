@@ -1,12 +1,15 @@
 </$objtype/mkfile
 
-TARG=rgbfix
+TARG=rgbgfx
 BIN=$home/bin/$objtype
 
 # ThIs MaKeS It PoRtAbLe
-POSIX=-D PRIu32="%ud" -DPRId32="%d" -DPRIx32="%x" -DPRIX32="%X" -DPRIo32="%o" -DSTDOUT_FILENO=1 -DSTDIN_FILENO=0 -DPRIu8="%ud" -DPRIu16="%ud" -DPRId16="%d" -DPRIx16="%x" -DPRIX16="%X" -DMB_LEN_MAX=4 -DUINT32_C='(uint32_t)' -DSSIZE_MAX='0xFFFFFFFF'
+POSIX=-D PRIu32="%ud" -DPRId32="%d" -DPRIx32="%x" -DPRIX32="%X" -DPRIo32="%o" -DSTDOUT_FILENO=1 -DSTDIN_FILENO=0 -DPRIu8="%ud" -DPRIu16="%ud" -DPRId16="%d" -DPRIx16="%x" -DPRIX16="%X" -DMB_LEN_MAX=4 -DUINT32_C='(uint32_t)' -DSSIZE_MAX='0xFFFFFFFF' -D__func__="???"
 
-CFLAGS=-Fpw -I ../../include -I/sys/include/npe -D__plan9__ -D__${objtype}__ $POSIX
+CFLAGS=$CLFAGS -p -I ../../include -I/sys/include/npe -I libpng -I zlib -D__plan9__ -D__${objtype}__ $POSIX -DSTDC
+LIB=\
+	libpng/libpng.$O.a \
+	zlib/libz.$O.a \
 
 OFILES=\
 	main.$O \
@@ -14,5 +17,17 @@ OFILES=\
 	makepng.$O \
 	getopt.$O \
 	version.$O \
+	error.$O \
 
 </sys/src/cmd/mkone
+
+zlib/libz.$O.a:V:
+	@{ cd zlib && mk }
+
+libpng/libpng.$O.a:V:
+	@{ cd libpng && mk }
+
+clean:V:
+	rm -f *.[$OS] [$OS].out y.tab.? lex.yy.c y.debug y.output $TARG $CLEANFILES
+	@{ cd zlib && mk clean }
+	@{ cd libpng && mk clean }

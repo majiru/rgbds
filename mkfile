@@ -4,6 +4,7 @@ DIRS=\
 	asm\
 	link\
 	fix\
+	gfx\
 
 all:V:
 	for(i in $DIRS)@{
