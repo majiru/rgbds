@@ -1,0 +1,27 @@
+</$objtype/mkfile
+
+CFLAGS=$CFLAGS -p -I ../zlib -I/sys/include/npe -D__plan9__ -D__${objtype}__ -DSTDC
+LIB=libpng.$O.a
+CLEANFILES=libpng.$O.a
+
+OFILES=\
+	png.$O \
+	pngerror.$O \
+	pnggccrd.$O \
+	pngget.$O \
+	pngmem.$O \
+	pngpread.$O \
+	pngread.$O \
+	pngrio.$O \
+	pngrtran.$O \
+	pngrutil.$O \
+	pngset.$O \
+	pngtest.$O \
+	pngtrans.$O \
+	pngvcrd.$O \
+	pngwio.$O \
+	pngwrite.$O \
+	pngwtran.$O \
+	pngwutil.$O \
+
+</sys/src/cmd/mksyslib
