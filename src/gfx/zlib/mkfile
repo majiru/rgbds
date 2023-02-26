@@ -1,0 +1,21 @@
+</$objtype/mkfile
+
+CFLAGS=$CFLAGS -p -I/sys/include/npe -D__plan9__ -D__${objtype}__ -DSTDC
+LIB=libz.$O.a
+CLEANFILES=libz.$O.a
+
+OFILES=\
+	adler32.$O \
+	compress.$O \
+	crc32.$O \
+	deflate.$O \
+	gzio.$O \
+	infback.$O \
+	inffast.$O \
+	inflate.$O \
+	inftrees.$O \
+	trees.$O \
+	uncompr.$O \
+	zutil.$O \
+
+</sys/src/cmd/mksyslib
